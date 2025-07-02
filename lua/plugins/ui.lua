@@ -2,11 +2,76 @@
 return {
   -- File explorer
   {
-    'nvim-tree/nvim-tree.lua',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- Phụ thuộc để hiển thị icon
+      'MunifTanjim/nui.nvim',
+    },
     config = function()
-      require('nvim-tree').setup {}
-      vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+      -- Nếu không có dòng này, neo-tree có thể không chạy
+      vim.fn.sign_define('DiagnosticSignError', { text = '', texthl = 'DiagnosticSignError' })
+      vim.fn.sign_define('DiagnosticSignWarn', { text = '', texthl = 'DiagnosticSignWarn' })
+      vim.fn.sign_define('DiagnosticSignInfo', { text = '', texthl = 'DiagnosticSignInfo' })
+      vim.fn.sign_define('DiagnosticSignHint', { text = '󰌵', texthl = 'DiagnosticSignHint' })
+
+      require('neo-tree').setup({
+        -- Đóng neo-tree nếu nó là buffer cuối cùng còn lại
+        close_if_last_window = true,
+        popup_border_style = 'rounded',
+        -- Cho phép xem trước file khi di chuyển con trỏ
+        enable_preview = true,
+        -- Cấu hình chung cho cửa sổ
+        window = {
+          position = 'left',
+          width = 30,
+          mappings = {
+            ['<space>'] = 'none', -- Vô hiệu hóa phím space mặc định
+            ['e'] = 'toggle_expand_all',
+            ['o'] = 'open',
+            ['a'] = 'add',
+            ['d'] = 'delete',
+            ['r'] = 'rename',
+            ['c'] = 'copy',
+            ['p'] = 'paste',
+            ['x'] = 'cut',
+            ['?'] = 'show_help',
+          },
+        },
+        -- Cấu hình cho từng nguồn dữ liệu
+        filesystem = {
+          filtered_items = {
+            visible = true,
+            hide_dotfiles = false,
+            hide_gitignored = false,
+          },
+          follow_current_file = {
+            enabled = true, -- Tự động focus vào file đang mở
+          },
+        },
+        -- Nguồn "Buffers" để xem các file đang mở
+        buffers = {
+          follow_current_file = {
+            enabled = true,
+          },
+        },
+        -- Nguồn "Git Status"
+        git_status = {
+          window = {
+            position = 'float', -- Hiển thị dưới dạng cửa sổ nổi cho đẹp
+          },
+        },
+      })
+
+      -- ĐỊNH NGHĨA KEYMAPS ĐỂ GỌI SIDEBAR ĐA NĂNG
+      local keymap = vim.keymap.set
+      -- Mở/đóng cây thư mục
+      keymap('n', '<leader>e', ':Neotree filesystem toggle<CR>', { desc = 'Toggle NeoTree Filesystem' })
+      -- Mở danh sách buffer
+      keymap('n', '<leader>b', ':Neotree buffers toggle<CR>', { desc = 'Toggle NeoTree Buffers' })
+      -- Mở trạng thái Git
+      keymap('n', '<leader>g', ':Neotree git_status<CR>', { desc = 'Toggle NeoTree Git Status' })
     end,
   },
 
