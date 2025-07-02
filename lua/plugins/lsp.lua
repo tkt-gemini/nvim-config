@@ -18,9 +18,8 @@ return {
       local lsp_zero = require('lsp-zero')
       lsp_zero.on_attach(function(client, bufnr)
         -- Tạo keymaps cho LSP khi nó attach vào buffer
-        -- Xem thêm các keymap tại: :help lsp-zero-keybindings
         lsp_zero.default_keymaps({buffer = bufnr})
-
+        -- Custom keymaps
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP: Go to Definition' })
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'LSP: Hover' })
         vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, { desc = 'LSP: Workspace Symbol' })
@@ -31,19 +30,111 @@ return {
         vim.keymap.set('n', '<leader>vrr', vim.lsp.buf.references, { desc = 'LSP: References' })
         vim.keymap.set('n', '<leader>vrn', vim.lsp.buf.rename, { desc = 'LSP: Rename' })
       end)
-      
-      -- Cấu hình mason để quản lý LSP server, linter, formatter
+
+      -- Cấu hình mason
       require('mason').setup({})
       require('mason-lspconfig').setup({
-        -- Đảm bảo các LSP server này được cài đặt
         ensure_installed = {
           'lua_ls',
-          'pyright', -- for Python
-          'typescript-language-server', -- for Javascript/TypeScript
-          'rust_analyzer', -- for Rust
+          'pyright',
+          'rust_analyzer',
+          'ts_ls',    -- TypeScript/JavaScript (tên mới)
+          'clangd',   -- C/C++
         },
         handlers = {
+          -- Handler mặc định cho các LSP không có cấu hình riêng
           lsp_zero.default_setup,
+          
+          -- Cấu hình riêng cho lua_ls
+          lua_ls = function()
+            local lspconfig = require('lspconfig')
+            lspconfig.lua_ls.setup(lsp_zero.nvim_lua_ls())
+          end,
+          
+          -- Cấu hình riêng cho pyright (Python)
+          pyright = function()
+            require('lspconfig').pyright.setup({
+              settings = {
+                python = {
+                  analysis = {
+                    autoSearchPaths = true,
+                    diagnosticMode = "workspace",
+                    useLibraryCodeForTypes = true,
+                    typeCheckingMode = "basic"
+                  }
+                }
+              }
+            })
+          end,
+          
+          -- Cấu hình riêng cho rust_analyzer
+          rust_analyzer = function()
+            require('lspconfig').rust_analyzer.setup({
+              settings = {
+                ['rust-analyzer'] = {
+                  cargo = {
+                    allFeatures = true,
+                  },
+                  checkOnSave = {
+                    command = "clippy",
+                  },
+                  procMacro = {
+                    enable = true,
+                  },
+                }
+              }
+            })
+          end,
+          
+          -- Cấu hình riêng cho TypeScript/JavaScript
+          ts_ls = function()
+            require('lspconfig').ts_ls.setup({
+              settings = {
+                typescript = {
+                  inlayHints = {
+                    includeInlayParameterNameHints = 'all',
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayFunctionParameterTypeHints = true,
+                    includeInlayVariableTypeHints = true,
+                    includeInlayPropertyDeclarationTypeHints = true,
+                    includeInlayFunctionLikeReturnTypeHints = true,
+                    includeInlayEnumMemberValueHints = true,
+                  }
+                },
+                javascript = {
+                  inlayHints = {
+                    includeInlayParameterNameHints = 'all',
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                    includeInlayFunctionParameterTypeHints = true,
+                    includeInlayVariableTypeHints = true,
+                    includeInlayPropertyDeclarationTypeHints = true,
+                    includeInlayFunctionLikeReturnTypeHints = true,
+                    includeInlayEnumMemberValueHints = true,
+                  }
+                }
+              }
+            })
+          end,
+          
+          -- Cấu hình riêng cho C/C++
+          clangd = function()
+            require('lspconfig').clangd.setup({
+              cmd = {
+                "clangd",
+                "--background-index",
+                "--clang-tidy",
+                "--header-insertion=iwyu",
+                "--completion-style=detailed",
+                "--function-arg-placeholders",
+                "--fallback-style=llvm",
+              },
+              init_options = {
+                usePlaceholders = true,
+                completeUnimported = true,
+                clangdFileStatus = true,
+              },
+            })
+          end,
         },
       })
     end
