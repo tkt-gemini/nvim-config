@@ -38,8 +38,8 @@ return {
           'lua_ls',
           'pyright',
           'rust_analyzer',
-          'ts_ls',    -- TypeScript/JavaScript (tên mới)
-          'clangd',   -- C/C++
+          'ts_ls',
+          'clangd',
         },
         handlers = {
           -- Handler mặc định cho các LSP không có cấu hình riêng
