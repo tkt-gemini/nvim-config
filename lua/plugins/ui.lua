@@ -1,12 +1,13 @@
 -- ~/.config/nvim/lua/plugins/ui.lua
 return {
+  -- Sidebar
   -- File explorer
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons', -- Phụ thuộc để hiển thị icon
+      'nvim-tree/nvim-web-devicons',
       'MunifTanjim/nui.nvim',
     },
     config = function()
@@ -73,6 +74,25 @@ return {
       -- Mở trạng thái Git
       keymap('n', '<leader>g', ':Neotree git_status<CR>', { desc = 'Toggle NeoTree Git Status' })
     end,
+  },
+
+  {
+    "kdheepak/lazygit.nvim",
+    cmd = {
+      "Lazygit",
+      "LazygitConfig",
+      "LazygitCurrentFile",
+      "LazygitFilter",
+      "LazygitFilterCurrentFile",
+    },
+    -- Tùy chọn: bạn có thể thêm các dependency nếu cần
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    -- Tùy chọn: Cấu hình phím tắt để mở
+    keys = {
+      { "<leader>gg", "<cmd>Lazygit<cr>", desc = "Lazygit" },
+    },
   },
 
   -- Status line
