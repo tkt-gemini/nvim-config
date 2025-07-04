@@ -11,11 +11,17 @@ return {
       'MunifTanjim/nui.nvim',
     },
     config = function()
-      -- Nếu không có dòng này, neo-tree có thể không chạy
-      vim.fn.sign_define('DiagnosticSignError', { text = '', texthl = 'DiagnosticSignError' })
-      vim.fn.sign_define('DiagnosticSignWarn', { text = '', texthl = 'DiagnosticSignWarn' })
-      vim.fn.sign_define('DiagnosticSignInfo', { text = '', texthl = 'DiagnosticSignInfo' })
-      vim.fn.sign_define('DiagnosticSignHint', { text = '󰌵', texthl = 'DiagnosticSignHint' })
+      -- Cấu hình cho các icon diagnostic
+      vim.diagnostic.config({
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = "󰅚 ",
+            [vim.diagnostic.severity.WARN]  = "󰀪 ",
+            [vim.diagnostic.severity.INFO]  = " ",
+            [vim.diagnostic.severity.HINT]  = "󰌶 ",
+          }
+        }
+      })
 
       require('neo-tree').setup({
         -- Đóng neo-tree nếu nó là buffer cuối cùng còn lại
@@ -68,9 +74,9 @@ return {
       -- ĐỊNH NGHĨA KEYMAPS ĐỂ GỌI SIDEBAR ĐA NĂNG
       local keymap = vim.keymap.set
       -- Mở/đóng cây thư mục
-      keymap('n', '<leader>e', ':Neotree filesystem toggle<CR>', { desc = 'Toggle NeoTree Filesystem' })
+      keymap('n', '<leader>fe', ':Neotree filesystem toggle<CR>', { desc = 'Toggle NeoTree Filesystem' })
       -- Mở danh sách buffer
-      keymap('n', '<leader>b', ':Neotree buffers toggle<CR>', { desc = 'Toggle NeoTree Buffers' })
+      keymap('n', '<leader>fb', ':Neotree buffers toggle<CR>', { desc = 'Toggle NeoTree Buffers' })
     end,
   },
 
