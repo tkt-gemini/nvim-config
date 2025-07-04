@@ -91,7 +91,7 @@ return {
     },
     -- Tùy chọn: Cấu hình phím tắt để mở
     keys = {
-      { "<leader>gg", "<cmd>Lazygit<cr>", desc = "Lazygit" },
+      { "<leader>gg", "<cmd>LazyGit<cr>", desc = "Lazygit" },
     },
   },
 
