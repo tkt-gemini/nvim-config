@@ -44,13 +44,38 @@ return {
         handlers = {
           -- Handler mặc định cho các LSP không có cấu hình riêng
           lsp_zero.default_setup,
-          
+
           -- Cấu hình riêng cho lua_ls
           lua_ls = function()
             local lspconfig = require('lspconfig')
-            lspconfig.lua_ls.setup(lsp_zero.nvim_lua_ls())
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+            lspconfig.lua_ls.setup {
+              capabilities = capabilities,
+
+              settings = {
+                Lua = {
+                  runtime = {
+                    version = 'LuaJIT',
+                  },
+
+                  diagnostics = {
+                    globals = { 'vim', 'use', 'require', 'hs' }
+                  },
+
+                  workspace = {
+                    library = {
+                      -- Load API of Neovim
+                      [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                      -- Load file .lua in config
+                      [vim.fn.stdpath('config') .. '/lua'] = true,
+                    }
+                  }
+                }
+              }
+            }
           end,
-          
+
           -- Cấu hình riêng cho pyright (Python)
           pyright = function()
             require('lspconfig').pyright.setup({
@@ -66,7 +91,7 @@ return {
               }
             })
           end,
-          
+
           -- Cấu hình riêng cho rust_analyzer
           rust_analyzer = function()
             require('lspconfig').rust_analyzer.setup({
