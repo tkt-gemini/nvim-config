@@ -110,7 +110,7 @@ return {
               }
             })
           end,
-          
+
           -- Cấu hình riêng cho TypeScript/JavaScript
           ts_ls = function()
             require('lspconfig').ts_ls.setup({
@@ -140,7 +140,7 @@ return {
               }
             })
           end,
-          
+
           -- Cấu hình riêng cho C/C++
           clangd = function()
             require('lspconfig').clangd.setup({
