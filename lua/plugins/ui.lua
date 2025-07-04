@@ -71,8 +71,6 @@ return {
       keymap('n', '<leader>e', ':Neotree filesystem toggle<CR>', { desc = 'Toggle NeoTree Filesystem' })
       -- Mở danh sách buffer
       keymap('n', '<leader>b', ':Neotree buffers toggle<CR>', { desc = 'Toggle NeoTree Buffers' })
-      -- Mở trạng thái Git
-      keymap('n', '<leader>g', ':Neotree git_status<CR>', { desc = 'Toggle NeoTree Git Status' })
     end,
   },
 
@@ -104,7 +102,7 @@ return {
         options = {
           theme = 'tokyonight',
           icons_enabled = true,
-          component_separators = { left = '', right = ''},
+          component_separators = { left = '•', right = '•'},
           section_separators = { left = '', right = ''},
         },
         sections = {
