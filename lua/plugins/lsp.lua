@@ -1,166 +1,252 @@
 -- ~/.config/nvim/lua/plugins/lsp.lua
 return {
+  -- Mason cho LSP management
   {
-    'VonHeikemen/lsp-zero.nvim',
-    branch = 'v3.x',
-    dependencies = {
-      -- LSP Support
-      {'neovim/nvim-lspconfig'},
-      {'williamboman/mason.nvim'},
-      {'williamboman/mason-lspconfig.nvim'},
+    'williamboman/mason.nvim',
+    opts = {
+      ui = {
+        border = 'rounded',
+      }
+    }
+  },
 
-      -- Autocompletion
-      {'hrsh7th/nvim-cmp'},
-      {'hrsh7th/cmp-nvim-lsp'},
-      {'L3MON4D3/LuaSnip'},
+  -- Mason LSP config
+  {
+    'williamboman/mason-lspconfig.nvim',
+    dependencies = { 'mason.nvim' },
+    opts = {
+      ensure_installed = {
+        'lua_ls',
+        'pyright',
+        'rust_analyzer',
+        'ts_ls',
+        'clangd',
+      },
+      automatic_enable = false,
+    }
+  },
+
+  -- LSP Config
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = { 'mason-lspconfig.nvim', 'nvim-cmp' },
+    config = function()
+      local lspconfig = require('lspconfig')
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+      -- LSP keymaps
+      local on_attach = function(client, bufnr)
+        local opts = { buffer = bufnr, silent = true }
+
+        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+        vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
+        vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
+        vim.keymap.set('n', '<leader>wl', function()
+          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, opts)
+        vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', '<leader>f', function()
+          vim.lsp.buf.format { async = true }
+        end, opts)
+
+        -- Diagnostics
+        vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+        vim.keymap.set('n', '[d', function ()
+          vim.diagnostic.jump { count = -1, float = true }
+        end, opts)
+        vim.keymap.set('n', ']d', function ()
+          vim.diagnostic.jump { count = 1, float = true }
+        end, opts)
+        vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+      end
+
+      -- Server configs
+      local servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              runtime = {
+                version = 'LuaJIT',
+              },
+              diagnostics = {
+                globals = { 'vim' },
+              },
+              workspace = {
+                library = {
+                  [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                  [vim.fn.stdpath('config') .. '/lua'] = true,
+                },
+              },
+              telemetry = {
+                enable = false,
+              },
+            },
+          },
+        },
+
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "workspace",
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = "basic",
+              },
+            },
+          },
+        },
+
+        rust_analyzer = {
+          settings = {
+            ["rust-analyzer"] = {
+              checkOnSave = {
+                command = "clippy",
+              },
+              cargo = {
+                allFeatures = true,
+              },
+              procMacro = {
+                enable = true,
+              },
+            },
+          },
+        },
+
+        ts_ls = {
+          settings = {
+            typescript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+            javascript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+          },
+        },
+
+        clangd = {
+          cmd = {
+            "clangd",
+            "--background-index",
+            "--clang-tidy",
+            "--header-insertion=iwyu",
+            "--completion-style=detailed",
+            "--function-arg-placeholders",
+            "--fallback-style=llvm",
+          },
+          init_options = {
+            usePlaceholders = true,
+            completeUnimported = true,
+            clangdFileStatus = true,
+          },
+        },
+      }
+
+      -- Setup servers
+      for server, config in pairs(servers) do
+        config.on_attach = on_attach
+        config.capabilities = capabilities
+        lspconfig[server].setup(config)
+      end
+    end
+  },
+
+  -- Autocompletion
+  {
+    'hrsh7th/nvim-cmp',
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
     },
     config = function()
-      local lsp_zero = require('lsp-zero')
-      lsp_zero.on_attach(function(client, bufnr)
-        -- Tạo keymaps cho LSP khi nó attach vào buffer
-        lsp_zero.default_keymaps({buffer = bufnr})
-        -- Custom keymaps
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'LSP: Go to Definition' })
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, { desc = 'LSP: Hover' })
-        vim.keymap.set('n', '<leader>vws', vim.lsp.buf.workspace_symbol, { desc = 'LSP: Workspace Symbol' })
-        vim.keymap.set('n', '<leader>vd', vim.diagnostic.open_float, { desc = 'LSP: View Diagnostics' })
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_next, { desc = 'LSP: Next Diagnostic' })
-        vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, { desc = 'LSP: Previous Diagnostic' })
-        vim.keymap.set('n', '<leader>vca', vim.lsp.buf.code_action, { desc = 'LSP: Code Action' })
-        vim.keymap.set('n', '<leader>vrr', vim.lsp.buf.references, { desc = 'LSP: References' })
-        vim.keymap.set('n', '<leader>vrn', vim.lsp.buf.rename, { desc = 'LSP: Rename' })
-      end)
+      local cmp = require('cmp')
+      local luasnip = require('luasnip')
 
-      -- Cấu hình mason
-      require('mason').setup({})
-      require('mason-lspconfig').setup({
-        ensure_installed = {
-          'lua_ls',
-          'pyright',
-          'rust_analyzer',
-          'ts_ls',
-          'clangd',
-        },
-        handlers = {
-          -- Handler mặc định cho các LSP không có cấu hình riêng
-          lsp_zero.default_setup,
-
-          -- Cấu hình riêng cho lua_ls
-          lua_ls = function()
-            local lspconfig = require('lspconfig')
-            local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-            lspconfig.lua_ls.setup {
-              capabilities = capabilities,
-
-              settings = {
-                Lua = {
-                  runtime = {
-                    version = 'LuaJIT',
-                  },
-
-                  diagnostics = {
-                    globals = { 'vim', 'use', 'require', 'hs' }
-                  },
-
-                  workspace = {
-                    library = {
-                      -- Load API of Neovim
-                      [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-                      -- Load file .lua in config
-                      [vim.fn.stdpath('config') .. '/lua'] = true,
-                    }
-                  }
-                }
-              }
-            }
-          end,
-
-          -- Cấu hình riêng cho pyright (Python)
-          pyright = function()
-            require('lspconfig').pyright.setup({
-              settings = {
-                python = {
-                  analysis = {
-                    autoSearchPaths = true,
-                    diagnosticMode = "workspace",
-                    useLibraryCodeForTypes = true,
-                    typeCheckingMode = "basic"
-                  }
-                }
-              }
-            })
-          end,
-
-          -- Cấu hình riêng cho rust_analyzer
-          rust_analyzer = function()
-            require('lspconfig').rust_analyzer.setup({
-              settings = {
-                ['rust-analyzer'] = {
-                  cargo = {
-                    allFeatures = true,
-                  },
-                  checkOnSave = {
-                    command = "clippy",
-                  },
-                  procMacro = {
-                    enable = true,
-                  },
-                }
-              }
-            })
-          end,
-
-          -- Cấu hình riêng cho TypeScript/JavaScript
-          ts_ls = function()
-            require('lspconfig').ts_ls.setup({
-              settings = {
-                typescript = {
-                  inlayHints = {
-                    includeInlayParameterNameHints = 'all',
-                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                    includeInlayFunctionParameterTypeHints = true,
-                    includeInlayVariableTypeHints = true,
-                    includeInlayPropertyDeclarationTypeHints = true,
-                    includeInlayFunctionLikeReturnTypeHints = true,
-                    includeInlayEnumMemberValueHints = true,
-                  }
-                },
-                javascript = {
-                  inlayHints = {
-                    includeInlayParameterNameHints = 'all',
-                    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                    includeInlayFunctionParameterTypeHints = true,
-                    includeInlayVariableTypeHints = true,
-                    includeInlayPropertyDeclarationTypeHints = true,
-                    includeInlayFunctionLikeReturnTypeHints = true,
-                    includeInlayEnumMemberValueHints = true,
-                  }
-                }
-              }
-            })
-          end,
-
-          -- Cấu hình riêng cho C/C++
-          clangd = function()
-            require('lspconfig').clangd.setup({
-              cmd = {
-                "clangd",
-                "--background-index",
-                "--clang-tidy",
-                "--header-insertion=iwyu",
-                "--completion-style=detailed",
-                "--function-arg-placeholders",
-                "--fallback-style=llvm",
-              },
-              init_options = {
-                usePlaceholders = true,
-                completeUnimported = true,
-                clangdFileStatus = true,
-              },
-            })
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
           end,
         },
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
+        mapping = cmp.mapping.preset.insert({
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { 'i', 's' }),
+        }),
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+        }, {
+          { name = 'buffer' },
+        }),
+      })
+
+      -- Cmdline completion
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' }
+        }
+      })
+
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline' }
+        })
       })
     end
   }
