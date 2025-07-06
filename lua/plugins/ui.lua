@@ -9,93 +9,104 @@ return {
       'nvim-lua/plenary.nvim',
       'nvim-tree/nvim-web-devicons',
       'MunifTanjim/nui.nvim',
+      -- { "3rd/image.nvim", opts = {} }, -- Optional image support
     },
-    config = function()
-      -- Cấu hình cho các icon diagnostic
+    lazy = false,
+    ---@module "neo-tree"
+    ---@type neotree.Config?
+    opts = {
+      close_if_last_window = true, -- If last window: Close
+      popup_border_style = 'rounded', -- Create rounded for popup border
+      source_selector = {
+        winbar = true,
+        statusline = false,
+        content_layout = 'center',
+        tabs_layout = 'equal',
+        show_icons = 'always'
+      },
+      default_component_configs = {
+        indent = {
+          indent_size = 2,
+          padding = 1,
+          with_markers = true,
+          indent_marker = "│",
+          last_indent_marker = "└",
+          highlight = "NeoTreeIndentMarker",
+        },
+        -- Cấu hình icon
+        icon = {
+          folder_closed = " ",
+          folder_open = " ",
+          folder_empty = "󰜌",
+          default = "", -- Icon mặc định
+          highlight = "NeoTreeFileIcon",
+        },
+        -- Tên file/folder
+        name = {
+          trailing_slash = false,
+          use_git_status_colors = true, -- Dùng màu theo trạng thái git
+          highlight = "NeoTreeFileName",
+        },
+      },
+      -- Config for window
+      window = {
+        position = 'right',
+        width = 35,
+      },
+      filesystem = {
+        filtered_items = {
+          visible = true,
+          hide_dotfiles = false,
+          hide_gitignored = false,
+        },
+        follow_current_file = {
+          enabled = true,
+        },
+      },
+      buffers = {
+        follow_current_file = {
+          enabled = true,
+        },
+      },
+    },
+
+    config = function(_, opts)
+      -- Config icon for diagnostics
       vim.diagnostic.config({
         signs = {
           text = {
-            [vim.diagnostic.severity.ERROR] = "󰅚 ",
-            [vim.diagnostic.severity.WARN]  = "󰀪 ",
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN]  = " ",
             [vim.diagnostic.severity.INFO]  = " ",
-            [vim.diagnostic.severity.HINT]  = "󰌶 ",
+            [vim.diagnostic.severity.HINT]  = " ",
           }
         }
       })
 
-      require('neo-tree').setup({
-        -- Đóng neo-tree nếu nó là buffer cuối cùng còn lại
-        close_if_last_window = true,
-        popup_border_style = 'rounded',
-        -- Cho phép xem trước file khi di chuyển con trỏ
-        enable_preview = true,
-        -- Cấu hình chung cho cửa sổ
-        window = {
-          position = 'left',
-          width = 30,
-          mappings = {
-            ['<space>'] = 'none', -- Vô hiệu hóa phím space mặc định
-            ['e'] = 'toggle_expand_all',
-            ['o'] = 'open',
-            ['a'] = 'add',
-            ['d'] = 'delete',
-            ['r'] = 'rename',
-            ['c'] = 'copy',
-            ['p'] = 'paste',
-            ['x'] = 'cut',
-            ['?'] = 'show_help',
-          },
-        },
-        -- Cấu hình cho từng nguồn dữ liệu
-        filesystem = {
-          filtered_items = {
-            visible = true,
-            hide_dotfiles = false,
-            hide_gitignored = false,
-          },
-          follow_current_file = {
-            enabled = true, -- Tự động focus vào file đang mở
-          },
-        },
-        -- Nguồn "Buffers" để xem các file đang mở
-        buffers = {
-          follow_current_file = {
-            enabled = true,
-          },
-        },
-        -- Nguồn "Git Status"
-        git_status = {
-          window = {
-            position = 'float', -- Hiển thị dưới dạng cửa sổ nổi cho đẹp
-          },
-        },
-      })
-
-      -- ĐỊNH NGHĨA KEYMAPS ĐỂ GỌI SIDEBAR ĐA NĂNG
-      local keymap = vim.keymap.set
-      -- Mở/đóng cây thư mục
-      keymap('n', '<leader>fe', ':Neotree filesystem toggle<CR>', { desc = 'Toggle NeoTree Filesystem' })
-      -- Mở danh sách buffer
-      keymap('n', '<leader>fb', ':Neotree buffers toggle<CR>', { desc = 'Toggle NeoTree Buffers' })
+      require('neo-tree').setup(opts)
     end,
+
+    keys = {
+      -- Open/Close tree folders
+      { '<leader>ne', '<cmd>Neotree filesystem toggle<CR>', desc = 'Toggle NeoTree Filesystem' },
+      -- Open/Close list buffers
+      { '<leader>nb', '<cmd>Neotree buffers toggle<CR>', desc = 'Toggle NeoTree Buffers' },
+      -- Open/Close Git status
+      { '<leader>ng', '<cmd>Neotree git_status toggle<CR>', desc = 'Toggle NeoTree Buffers' },
+      -- 
+      { '<leader>ns', '<cmd>Neotree document_symbols toggle<cr>', desc = 'Toggle NeoTree Document symbols'}
+    }
   },
 
   {
     "kdheepak/lazygit.nvim",
-    cmd = {
-      "Lazygit",
-      "LazygitConfig",
-      "LazygitCurrentFile",
-      "LazygitFilter",
-      "LazygitFilterCurrentFile",
-    },
-    -- Tùy chọn: bạn có thể thêm các dependency nếu cần
+
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
-    -- Tùy chọn: Cấu hình phím tắt để mở
+
     keys = {
-      { "<leader>gg", "<cmd>LazyGit<cr>", desc = "Lazygit" },
+      { "<leader>gg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
     },
   },
 
@@ -103,21 +114,15 @@ return {
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      require('lualine').setup {
-        options = {
-          theme = 'tokyonight',
-          icons_enabled = true,
-          component_separators = { left = '•', right = '•'},
-          section_separators = { left = '', right = ''},
-        },
-        sections = {
-          lualine_c = {
-            {'filename', file_status = true, path = 1}
-          },
-        }
-      }
-    end,
+
+    opts = {
+      options = {
+        theme = 'auto',
+        icons_enabled = true,
+        component_separators = '•',
+        section_separators = { left = '', right = ''},
+      },
+    }
   },
 
   -- Syntax highlighting tốt hơn với Treesitter
@@ -125,13 +130,25 @@ return {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     config = function()
-        require('nvim-treesitter.configs').setup({
-            ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "typescript", "python", "html", "css", "go" },
-            sync_install = false,
-            auto_install = true,
-            highlight = { enable = true },
-            indent = { enable = true },
-        })
+      require('nvim-treesitter.configs').setup({
+        ensure_installed = {
+          "c",
+          "lua",
+          "vim",
+          "vimdoc",
+          "query",
+          "javascript",
+          "typescript",
+          "python",
+          "html",
+          "css",
+          "go"
+        },
+        sync_install = false,
+        auto_install = true,
+        highlight = { enable = true },
+        indent = { enable = true },
+      })
     end
   },
 }
