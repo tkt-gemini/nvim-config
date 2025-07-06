@@ -15,6 +15,7 @@ opt.smartindent = true -- Thụt lề thông minh cho dòng mới
 opt.autoindent = true  -- Tự động thụt lề
 
 -- GIAO DIỆN
+opt.laststatus = 3
 opt.wrap = true -- Không tự động xuống dòng khi dòng quá dài
 opt.termguicolors = true -- Bật màu 24-bit (quan trọng cho themes)
 opt.signcolumn = 'yes' -- Luôn hiển thị cột sign (cho LSP, Git signs)
