@@ -3,7 +3,12 @@ local themes = {
   tokyonight = {
     repo = 'folke/tokyonight.nvim',
     opts = {
-      transparent = true
+      style = 'storm',
+      transparent = true,
+      styles = {
+        comments = { italic = true },
+        keywords = { italic = true },
+      },
     },
   },
   dracula = {
@@ -16,7 +21,7 @@ local themes = {
   },
 }
 
-local activeThemeName = 'dracula'
+local activeThemeName = 'tokyonight'
 local activeTheme = themes[activeThemeName]
 
 return {
