@@ -1,16 +1,30 @@
 -- ~/.config/nvim/lua/plugins/colorscheme.lua
-return {
-  {
-    'folke/tokyonight.nvim',
-    lazy = false, -- Tải ngay khi khởi động
-    priority = 1000, -- Ưu tiên tải trước các plugin khác
+local themes = {
+  tokyonight = {
+    repo = 'folke/tokyonight.nvim',
     opts = {
       transparent = true
     },
-    config = function(_, opts)
-      require('tokyonight').setup(opts)
-      -- Tải colorscheme
-      vim.cmd.colorscheme 'tokyonight-storm'
-    end,
   },
+  dracula = {
+    repo = 'Mofiqul/dracula.nvim',
+    opts = {
+      color_palette = 'soft',
+      transparent_bg = true,
+      italic_comment = true,
+    },
+  },
+}
+
+local activeThemeName = 'dracula'
+local activeTheme = themes[activeThemeName]
+
+return {
+  activeTheme.repo,
+  lazy = false,
+  priority = 1000,
+  opts = activeTheme.opts,
+  config = function (_, opts)
+    vim.cmd.colorscheme(activeThemeName)
+  end
 }
