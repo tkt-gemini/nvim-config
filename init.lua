@@ -12,3 +12,4 @@ require('config.keymaps')
 -- Khởi động trình quản lý plugin Lazy.nvim
 -- File này sẽ tải và cấu hình tất cả các plugin.
 require('config.lazy')
+require('config.auto-cmp')
