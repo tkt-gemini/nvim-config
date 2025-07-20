@@ -96,7 +96,7 @@ return {
             python = {
               analysis = {
                 autoSearchPaths = true,
-                diagnosticMode = "workspace",
+                diagnosticMode = "openFileOnly",
                 useLibraryCodeForTypes = true,
                 typeCheckingMode = "basic",
               },
