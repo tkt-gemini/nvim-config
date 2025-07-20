@@ -30,6 +30,7 @@ return {
   priority = 1000,
   opts = activeTheme.opts,
   config = function (_, opts)
+    require(activeThemeName).setup(opts)
     vim.cmd.colorscheme(activeThemeName)
   end
 }
