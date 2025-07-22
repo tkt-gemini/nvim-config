@@ -35,3 +35,6 @@ keymap('n', '<leader>X', ':qa<CR>', { desc = 'Quit All' })
 -- Di chuyển dòng/khối code
 keymap('v', 'J', ":m '>+1<CR>gv=gv", opts)
 keymap('v', 'K', ":m '<-2<CR>gv=gv", opts)
+
+--
+keymap({ 'n', 'i' }, '<C-d>', 'bve', { desc = 'Select the word that cursor is currently hovering over' })

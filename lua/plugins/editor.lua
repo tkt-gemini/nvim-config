@@ -38,13 +38,33 @@ return {
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    config = function()
-        local telescope = require('telescope.builtin')
-        vim.keymap.set('n', '<leader>ff', telescope.find_files, { desc = 'Find Files' })
-        vim.keymap.set('n', '<leader>fg', telescope.live_grep, { desc = 'Live Grep' })
-        vim.keymap.set('n', '<leader>fb', telescope.buffers, { desc = 'Find Buffers' })
-        vim.keymap.set('n', '<leader>fh', telescope.help_tags, { desc = 'Help Tags' })
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+    },
+    opts = {
+      defaults = {
+        selection_caret = '❯ ',
+        file_ignore_patterns = {
+          "node_modules",
+          "%.lock",
+          "%.git/",
+          "build/",
+          "dist/",
+          "vendor/"
+        },
+      },
+    },
+    config = function(_, opts)
+      local telescope = require('telescope')
+      local builtin = require('telescope.builtin')
+
+      telescope.setup(opts)
+      telescope.load_extension('fzf')
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find Files' })
+      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Live Grep' })
+      vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Find Buffers' })
+      vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help Tags' })
     end
   },
 }
