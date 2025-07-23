@@ -114,15 +114,53 @@ return {
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-
     opts = {
       options = {
         theme = 'auto',
         icons_enabled = true,
         component_separators = '•',
-        section_separators = { left = '', right = ''},
+        section_separators = { left = '', right = ''},
+        disabled_filetypes = {
+          statusline = {},
+          winbar = {},
+        },
       },
-    }
+      sections = {
+        lualine_y = {},
+        lualine_z = {},
+      },
+      inactive_sections = {
+        lualine_y = {},
+        lualine_z = {}
+      },
+      extensions = {'neo-tree', 'toggleterm'},
+    },
+    config = function (_, opts)
+      local function locationSection()
+        local line = vim.fn.line('.')
+        local col = vim.fn.col('.')
+        return string.format("%d, %d", line, col)
+      end
+
+      local function indentSection()
+        local expandtab = vim.bo.expandtab
+        local tabstop = vim.bo.tabstop
+        local shiftwidth = vim.bo.shiftwidth
+
+        if expandtab then
+          return string.format("Spaces: %d", shiftwidth)
+        else
+          return string.format("Tabs: %d", tabstop)
+        end
+      end
+
+      opts.sections.lualine_y = { indentSection }
+      opts.sections.lualine_z = { locationSection }
+      opts.inactive_sections.lualine_y = { indentSection }
+      opts.inactive_sections.lualine_z = { locationSection }
+
+      require('lualine').setup(opts)
+    end,
   },
 
   -- Syntax highlighting tốt hơn với Treesitter
