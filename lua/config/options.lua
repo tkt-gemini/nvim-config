@@ -42,6 +42,18 @@ opt.clipboard = 'unnamedplus'     -- Đồng bộ clipboard hệ thống
 opt.foldmethod = 'expr'
 opt.foldexpr = 'nvim_treesitter#foldexpr()'
 opt.foldlevel = 99 -- Mở tất cả các fold khi mở file
+opt.fillchars:append({ fold = ' ' })
+opt.foldtext = 'v:lua.custom_foldtext()'
+
+function _G.custom_foldtext()
+  local firstLine = vim.fn.getline(vim.v.foldstart)
+  local lineCount = vim.v.foldend - vim.v.foldstart + 1
+  local icon = ''
+  local text = vim.fn.substitute(firstLine, [[^\s*]], '', '')
+  local final_text = string.format('%s %s...(%d lines)', icon, text, lineCount)
+
+  return final_text
+end
 
 -- Đặt con trỏ vào giữa màn hình khi tìm kiếm hoặc di chuyển trang
 vim.keymap.set('n', 'n', 'nzzzv')

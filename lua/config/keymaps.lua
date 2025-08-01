@@ -37,4 +37,5 @@ keymap('v', 'J', ":m '>+1<CR>gv=gv", opts)
 keymap('v', 'K', ":m '<-2<CR>gv=gv", opts)
 
 --
-keymap({ 'n', 'i' }, '<C-d>', 'bve', { desc = 'Select the word that cursor is currently hovering over' })
+keymap('n', '<C-d>', 'bve', opts)
+keymap('n', '<C-a>', 'ggVG', opts)
