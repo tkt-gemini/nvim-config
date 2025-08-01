@@ -15,7 +15,7 @@ return {
     ---@module "neo-tree"
     ---@type neotree.Config?
     opts = {
-      close_if_last_window = true, -- If last window: Close
+      close_if_last_window = true,    -- If last window: Close
       popup_border_style = 'rounded', -- Create rounded for popup border
       source_selector = {
         winbar = true,
@@ -88,13 +88,13 @@ return {
 
     keys = {
       -- Open/Close tree folders
-      { '<leader>ne', '<cmd>Neotree filesystem toggle<CR>', desc = 'Toggle NeoTree Filesystem' },
+      { '<leader>ne', '<cmd>Neotree filesystem toggle<CR>',       desc = 'Toggle NeoTree Filesystem' },
       -- Open/Close list buffers
-      { '<leader>nb', '<cmd>Neotree buffers toggle<CR>', desc = 'Toggle NeoTree Buffers' },
+      { '<leader>nb', '<cmd>Neotree buffers toggle<CR>',          desc = 'Toggle NeoTree Buffers' },
       -- Open/Close Git status
-      { '<leader>ng', '<cmd>Neotree git_status toggle<CR>', desc = 'Toggle NeoTree Buffers' },
-      -- 
-      { '<leader>ns', '<cmd>Neotree document_symbols toggle<cr>', desc = 'Toggle NeoTree Document symbols'}
+      { '<leader>ng', '<cmd>Neotree git_status toggle<CR>',       desc = 'Toggle NeoTree Buffers' },
+      --
+      { '<leader>ns', '<cmd>Neotree document_symbols toggle<cr>', desc = 'Toggle NeoTree Document symbols' }
     }
   },
 
@@ -119,7 +119,7 @@ return {
         theme = 'auto',
         icons_enabled = true,
         component_separators = '•',
-        section_separators = { left = '', right = ''},
+        section_separators = { left = '', right = '' },
         disabled_filetypes = {
           statusline = {},
           winbar = {},
@@ -133,9 +133,9 @@ return {
         lualine_y = {},
         lualine_z = {}
       },
-      extensions = {'neo-tree', 'toggleterm'},
+      extensions = { 'neo-tree', 'toggleterm' },
     },
-    config = function (_, opts)
+    config = function(_, opts)
       local function locationSection()
         local line = vim.fn.line('.')
         local col = vim.fn.col('.')
