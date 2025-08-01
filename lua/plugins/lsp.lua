@@ -6,8 +6,47 @@ return {
     opts = {
       ui = {
         border = 'rounded',
-      }
+      },
+      ensure_installed = {
+        -- LINTERS & FORMATTERS
+        'stylua',
+        'ruff',
+      },
     }
+  },
+
+  -- Formatters config
+  {
+    "stevearc/conform.nvim",
+    event = { "BufWritePre" },
+    cmd = { "ConformInfo" },
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        python = { "ruff" },
+        javascript = { "prettierd" },
+        typescript = { "prettierd" },
+      },
+    },
+  },
+
+  -- Linters config
+  {
+    "mfussenegger/nvim-lint",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local lint = require("lint")
+      lint.linters_by_ft = {
+        python = { "ruff" },
+      }
+
+      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+        group = vim.api.nvim_create_augroup("nvim-lint-autogroup", { clear = true }),
+        callback = function()
+          lint.try_lint()
+        end,
+      })
+    end,
   },
 
   -- Mason LSP config
@@ -179,6 +218,7 @@ return {
     'hrsh7th/nvim-cmp',
     dependencies = {
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-cmdline',
@@ -227,6 +267,7 @@ return {
         sources = cmp.config.sources({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'nvim_lsp_signature_help' },
         }, {
           { name = 'buffer' },
         }),
