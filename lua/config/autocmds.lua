@@ -1,6 +1,6 @@
 -- ~/.config/nvim/lua/config/autocmds.lua
 
-vim.g.python3_host_prog = '~/.pyenv/versions/nvim-env/bin/python'
+vim.g.python3_host_prog = '$PYENV_ROOT/versions/nvim-env/bin/python'
 vim.g.loaded_perl_provider = 0
 
 local augroup = vim.api.nvim_create_augroup
