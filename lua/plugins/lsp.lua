@@ -1,18 +1,27 @@
 -- ~/.config/nvim/lua/plugins/lsp.lua
 return {
-  -- Mason cho LSP management
+  -- Mason for LSP management
   {
     'williamboman/mason.nvim',
     opts = {
       ui = {
         border = 'rounded',
       },
+    }
+  },
+
+  -- Mason tool installer
+  {
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    dependencies = { 'mason.nvim' },
+    opts = {
       ensure_installed = {
-        -- LINTERS & FORMATTERS
+        -- Linters & Formatters
         'stylua',
         'ruff',
+        'prettierd',
       },
-    }
+    },
   },
 
   -- Formatters config
@@ -20,14 +29,27 @@ return {
     "stevearc/conform.nvim",
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
-    opts = {
-      formatters_by_ft = {
-        lua = { "stylua" },
-        python = { "ruff" },
-        javascript = { "prettierd" },
-        typescript = { "prettierd" },
-      },
-    },
+    opts = function()
+      local ruff_cmd = vim.fn.exepath("ruff")
+      local formatters = {}
+      if ruff_cmd ~= "" then
+        formatters.ruff_format = { command = ruff_cmd }
+      end
+
+      return {
+        -- Format on save via Conform, fallback to LSP if no formatter
+        format_on_save = function(bufnr)
+          return { lsp_fallback = true, timeout_ms = 500 }
+        end,
+        formatters_by_ft = {
+          lua = { "stylua" },
+          python = { "ruff_format" },
+          javascript = { "prettierd" },
+          typescript = { "prettierd" },
+        },
+        formatters = formatters,
+      }
+    end,
   },
 
   -- Linters config
@@ -40,7 +62,16 @@ return {
         python = { "ruff" },
       }
 
-      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+      -- Resolve Ruff binary dynamically from PATH
+      do
+        local ruff_cmd = vim.fn.exepath("ruff")
+        if ruff_cmd ~= "" and lint.linters and lint.linters.ruff then
+          lint.linters.ruff.cmd = ruff_cmd
+        end
+      end
+
+      -- Trigger lint on read/write, avoid InsertLeave for performance/stability
+      vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost" }, {
         group = vim.api.nvim_create_augroup("nvim-lint-autogroup", { clear = true }),
         callback = function()
           lint.try_lint()
@@ -59,7 +90,6 @@ return {
         'pyright',
         'rust_analyzer',
         'ts_ls',
-        'clangd',
       },
       automatic_enable = false,
     }
@@ -97,10 +127,10 @@ return {
 
         -- Diagnostics
         vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-        vim.keymap.set('n', '[d', function ()
+        vim.keymap.set('n', '[d', function()
           vim.diagnostic.jump { count = -1, float = true }
         end, opts)
-        vim.keymap.set('n', ']d', function ()
+        vim.keymap.set('n', ']d', function()
           vim.diagnostic.jump { count = 1, float = true }
         end, opts)
         vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
@@ -138,6 +168,17 @@ return {
                 diagnosticMode = "openFileOnly",
                 useLibraryCodeForTypes = true,
                 typeCheckingMode = "basic",
+                -- Disable lint-like diagnostics to let Ruff handle linting
+                diagnosticSeverityOverrides = {
+                  reportUnusedImport = "none",
+                  reportUnusedVariable = "none",
+                  reportUnusedFunction = "none",
+                  reportUnusedClass = "none",
+                  reportDuplicateImport = "none",
+                  reportGeneralTypeIssues = "none",
+                  reportOptionalMemberAccess = "none",
+                  reportOptionalSubscript = "none",
+                },
               },
             },
           },

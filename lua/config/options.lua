@@ -1,47 +1,47 @@
 -- ~/.config/nvim/lua/config/options.lua
 
-local opt = vim.opt -- Viết tắt cho vim.opt để code gọn hơn
+local opt = vim.opt -- Shorthand for vim.opt
 
--- SỐ DÒNG
-opt.relativenumber = true -- Hiển thị số dòng tương đối
-opt.number = true         -- Hiển thị số dòng hiện tại
+-- Line numbers
+opt.relativenumber = true -- Show relative line numbers
+opt.number = true         -- Show absolute number on current line
 
--- INDENT (THỤT LỀ)
-opt.tabstop = 2       -- Số lượng dấu cách cho một tab
-opt.softtabstop = 2   -- Số lượng dấu cách khi nhấn Tab
-opt.shiftwidth = 2    -- Số lượng dấu cách cho auto-indent
-opt.expandtab = true  -- Chuyển Tab thành dấu cách
-opt.smartindent = true -- Thụt lề thông minh cho dòng mới
-opt.autoindent = true  -- Tự động thụt lề
+-- Indentation
+opt.tabstop = 2       -- Visual width of a <Tab>
+opt.softtabstop = 2   -- Spaces inserted when pressing <Tab>
+opt.shiftwidth = 2    -- Indent width for auto-indent
+opt.expandtab = true  -- Use spaces instead of tabs
+opt.smartindent = true -- Smart auto-indenting on new lines
+opt.autoindent = true  -- Keep indent from current line
 
--- GIAO DIỆN
+-- UI
 opt.laststatus = 3
-opt.wrap = true -- Không tự động xuống dòng khi dòng quá dài
-opt.termguicolors = true -- Bật màu 24-bit (quan trọng cho themes)
-opt.signcolumn = 'yes' -- Luôn hiển thị cột sign (cho LSP, Git signs)
-opt.scrolloff = 8 -- Giữ 8 dòng context ở trên và dưới khi cuộn
-opt.sidescrolloff = 8 -- Tương tự cho cuộn ngang
+opt.wrap = true -- Wrap long lines
+opt.termguicolors = true -- Enable 24-bit colors
+opt.signcolumn = 'yes' -- Always show sign column
+opt.scrolloff = 8 -- Keep 8 lines visible above/below cursor
+opt.sidescrolloff = 8 -- Keep 8 columns visible left/right
 
--- TÌM KIẾM
-opt.hlsearch = true  -- Highlight các kết quả tìm kiếm
-opt.incsearch = true -- Hiển thị kết quả ngay khi đang gõ
-opt.ignorecase = true -- Bỏ qua hoa/thường khi tìm kiếm
-opt.smartcase = true  -- Nhưng sẽ phân biệt nếu có chữ hoa trong mẫu tìm kiếm
+-- Search
+opt.hlsearch = true  -- Highlight search matches
+opt.incsearch = true -- Live incremental searching
+opt.ignorecase = true -- Case-insensitive by default
+opt.smartcase = true  -- Case-sensitive if pattern has uppercase
 
--- HÀNH VI
-opt.undofile = true               -- Bật undo-tree persistent (lưu lịch sử undo sau khi tắt)
-opt.swapfile = false              -- Tắt swap file
-opt.backup = false                -- Tắt file backup
-opt.updatetime = 250              -- Thời gian chờ trước khi ghi cursorhold event (ms)
-opt.timeoutlen = 300              -- Thời gian chờ cho key sequence (ms)
-opt.splitright = true             -- Mở split mới sang bên phải
-opt.splitbelow = true             -- Mở split mới xuống dưới
-opt.clipboard = 'unnamedplus'     -- Đồng bộ clipboard hệ thống
+-- Behavior
+opt.undofile = true               -- Persist undo history
+opt.swapfile = false              -- Disable swap files
+opt.backup = false                -- Disable backup files
+opt.updatetime = 250              -- CursorHold update time (ms)
+opt.timeoutlen = 300              -- Mapped sequence timeout (ms)
+opt.splitright = true             -- Vertical splits open to the right
+opt.splitbelow = true             -- Horizontal splits open below
+opt.clipboard = 'unnamedplus'     -- Use system clipboard
 
--- GẤP CODE (FOLDING)
+-- Folding
 opt.foldmethod = 'expr'
 opt.foldexpr = 'nvim_treesitter#foldexpr()'
-opt.foldlevel = 99 -- Mở tất cả các fold khi mở file
+opt.foldlevel = 99 -- Open all folds by default
 opt.fillchars:append({ fold = ' ' })
 opt.foldtext = 'v:lua.custom_foldtext()'
 
@@ -55,7 +55,7 @@ function _G.custom_foldtext()
   return final_text
 end
 
--- Đặt con trỏ vào giữa màn hình khi tìm kiếm hoặc di chuyển trang
+-- Center cursor when searching or paging
 vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')

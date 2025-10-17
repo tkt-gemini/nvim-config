@@ -23,7 +23,16 @@ return {
       max_height_window_percentage = 50,
       tmux_show_only_in_active_window = true,
       hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" },
-    }
+    },
+    config = function(_, opts)
+      -- Only setup image.nvim if we're in a proper terminal environment
+      local ok, _ = pcall(function()
+        require('image').setup(opts)
+      end)
+      if not ok then
+        vim.notify("image.nvim failed to initialize - skipping", vim.log.levels.WARN)
+      end
+    end
   },
 
   {

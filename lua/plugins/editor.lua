@@ -1,20 +1,20 @@
 -- ~/.config/nvim/lua/plugins/editor.lua
 return {
-  -- Tự động đóng ngoặc, ngoặc kép...
+  -- Auto-close pairs
   {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
     config = true
   },
 
-  -- Comment code dễ dàng với `gcc` (comment 1 dòng) hoặc `gc` + motion
+  -- Comment with `gcc` (line) or `gc` (motion)
   {
     'numToStr/Comment.nvim',
     opts = {},
     lazy = false,
   },
 
-  -- Tích hợp Git, hiển thị các thay đổi ở cột bên trái
+  -- Git signs in sign column
   {
     'lewis6991/gitsigns.nvim',
     config = function()
@@ -22,19 +22,19 @@ return {
     end
   },
 
-  -- Terminal tích hợp
+  -- Integrated terminal
   {
     'akinsho/toggleterm.nvim',
     version = "*",
     config = function()
       require('toggleterm').setup({
-        open_mapping = [[<c-\>]], -- Mở terminal bằng Ctrl + \
+        open_mapping = [[<c-\>]], -- Toggle with Ctrl+\
         direction = 'float',
       })
     end
   },
 
-  -- Fuzzy finding (cực kỳ quan trọng)
+  -- Fuzzy finding
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
@@ -44,7 +44,16 @@ return {
     },
     opts = {
       defaults = {
-        selection_caret = '❯ ',
+        selection_caret = ' ',
+        prompt_prefix = ' ',
+        path_display = { 'smart' },
+        preview = {
+          filesize_limit = 10,
+          files = {
+            '*.md',
+            '*.txt',
+          },
+        },
         file_ignore_patterns = {
           "node_modules",
           "%.lock",

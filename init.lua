@@ -1,15 +1,24 @@
 -- ~/.config/nvim/init.lua
 
--- Đặt leader key TRƯỚC TIÊN. ' ' (phím space) là lựa chọn phổ biến nhất.
+-- Set leader key
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Tải các thiết lập cơ bản (options, keymaps)
--- Các file này sẽ được thực thi trước khi plugin được tải.
+-- Ensure ~/.local/bin is on PATH for this Neovim session
+do
+  local home_local_bin = vim.fn.expand('~/.local/bin')
+  if home_local_bin ~= '' and not string.find(':' .. (vim.env.PATH or '') .. ':', ':' .. home_local_bin .. ':', 1, true) then
+    vim.env.PATH = (vim.env.PATH or '') .. ':' .. home_local_bin
+  end
+end
+
+-- Load basic settings (options, keymaps)
+-- These files will be executed before the plugin is loaded.
 require('config.options')
 require('config.keymaps')
+require('config.diagnostics')
 
--- Khởi động trình quản lý plugin Lazy.nvim
--- File này sẽ tải và cấu hình tất cả các plugin.
+-- Load plugin manager Lazy.nvim
+-- This file will load and configure all plugins.
 require('config.lazy')
 require('config.autocmds')

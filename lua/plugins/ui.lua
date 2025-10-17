@@ -1,7 +1,6 @@
 -- ~/.config/nvim/lua/plugins/ui.lua
 return {
   -- Sidebar
-  -- File explorer
   {
     'nvim-neo-tree/neo-tree.nvim',
     branch = 'v3.x',
@@ -9,9 +8,15 @@ return {
       'nvim-lua/plenary.nvim',
       'nvim-tree/nvim-web-devicons',
       'MunifTanjim/nui.nvim',
-      -- { "3rd/image.nvim", opts = {} }, -- Optional image support
     },
-    lazy = false,
+    lazy = true,
+    cmd = { 'Neotree' },
+    keys = {
+      { '<leader>ne', '<cmd>Neotree filesystem toggle<CR>',       desc = 'Toggle NeoTree Filesystem' },
+      { '<leader>nb', '<cmd>Neotree buffers toggle<CR>',          desc = 'Toggle NeoTree Buffers' },
+      { '<leader>ng', '<cmd>Neotree git_status toggle<CR>',       desc = 'Toggle NeoTree Buffers' },
+      { '<leader>ns', '<cmd>Neotree document_symbols toggle<cr>', desc = 'Toggle NeoTree Document symbols' }
+    },
     ---@module "neo-tree"
     ---@type neotree.Config?
     opts = {
@@ -33,18 +38,18 @@ return {
           last_indent_marker = "└",
           highlight = "NeoTreeIndentMarker",
         },
-        -- Cấu hình icon
+        -- Config icon
         icon = {
-          folder_closed = " ",
-          folder_open = " ",
+          folder_closed = " ",
+          folder_open = " ",
           folder_empty = "󰜌",
-          default = "", -- Icon mặc định
+          default = "", -- Default icon
           highlight = "NeoTreeFileIcon",
         },
-        -- Tên file/folder
+        -- File/folder name
         name = {
           trailing_slash = false,
-          use_git_status_colors = true, -- Dùng màu theo trạng thái git
+          use_git_status_colors = true, -- Use git status colors
           highlight = "NeoTreeFileName",
         },
       },
@@ -71,31 +76,10 @@ return {
     },
 
     config = function(_, opts)
-      -- Config icon for diagnostics
-      vim.diagnostic.config({
-        signs = {
-          text = {
-            [vim.diagnostic.severity.ERROR] = "●",
-            [vim.diagnostic.severity.WARN]  = "●",
-            [vim.diagnostic.severity.INFO]  = "●",
-            [vim.diagnostic.severity.HINT]  = "●",
-          }
-        }
-      })
-
       require('neo-tree').setup(opts)
     end,
 
-    keys = {
-      -- Open/Close tree folders
-      { '<leader>ne', '<cmd>Neotree filesystem toggle<CR>',       desc = 'Toggle NeoTree Filesystem' },
-      -- Open/Close list buffers
-      { '<leader>nb', '<cmd>Neotree buffers toggle<CR>',          desc = 'Toggle NeoTree Buffers' },
-      -- Open/Close Git status
-      { '<leader>ng', '<cmd>Neotree git_status toggle<CR>',       desc = 'Toggle NeoTree Buffers' },
-      --
-      { '<leader>ns', '<cmd>Neotree document_symbols toggle<cr>', desc = 'Toggle NeoTree Document symbols' }
-    }
+    -- Keys moved above to enable lazy-loading on keypress
   },
 
   {
@@ -163,7 +147,7 @@ return {
     end,
   },
 
-  -- Syntax highlighting tốt hơn với Treesitter
+  -- Better syntax highlighting with Treesitter
   {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -185,7 +169,10 @@ return {
         sync_install = false,
         auto_install = true,
         highlight = { enable = true },
-        -- indent = { enable = true },
+        indent = { 
+          enable = true,
+          disable = { "python", "yaml" } -- Disable for languages with poor indent support
+        },
       })
     end
   },
