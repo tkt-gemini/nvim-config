@@ -5,7 +5,7 @@ local themes = {
 		repo = "folke/tokyonight.nvim",
 		opts = {
 			style = "storm",
-			transparent = true,
+			-- transparent = true,
 			styles = {
 				comments = { italic = true },
 				keywords = { italic = true },
@@ -16,7 +16,7 @@ local themes = {
 		repo = "Mofiqul/dracula.nvim",
 		opts = {
 			color_palette = "soft",
-			transparent_bg = true,
+			-- transparent_bg = true,
 			italic_comment = true,
 		},
 	},
