@@ -7,9 +7,9 @@ opt.relativenumber = true -- Show relative line numbers
 opt.number = true         -- Show absolute number on current line
 
 -- Indentation
-opt.tabstop = 2       -- Visual width of a <Tab>
-opt.softtabstop = 2   -- Spaces inserted when pressing <Tab>
-opt.shiftwidth = 2    -- Indent width for auto-indent
+opt.tabstop = 4       -- Visual width of a <Tab>
+opt.softtabstop = 4   -- Spaces inserted when pressing <Tab>
+opt.shiftwidth = 4    -- Indent width for auto-indent
 opt.expandtab = true  -- Use spaces instead of tabs
 opt.smartindent = true -- Smart auto-indenting on new lines
 opt.autoindent = true  -- Keep indent from current line
@@ -54,9 +54,3 @@ function _G.custom_foldtext()
 
   return final_text
 end
-
--- Center cursor when searching or paging
-vim.keymap.set('n', 'n', 'nzzzv')
-vim.keymap.set('n', 'N', 'Nzzzv')
-vim.keymap.set('n', '<C-d>', '<C-d>zz')
-vim.keymap.set('n', '<C-u>', '<C-u>zz')
