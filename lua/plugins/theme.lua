@@ -1,4 +1,4 @@
--- ~/.config/nvim/lua/plugins/colorscheme.lua
+-- ~/.config/nvim/lua/plugins/theme.lua
 
 local themes = {
 	tokyonight = {
