@@ -87,35 +87,6 @@ return {
 		end,
 	},
 
-	-- Treesitter
-	{
-		"nvim-treesitter/nvim-treesitter",
-		lazy = false,
-		build = ":TSUpdate",
-		opts = {
-			ensure_installed = {
-				"c",
-				"lua",
-				"vim",
-				"vimdoc",
-				"query",
-				"javascript",
-				"typescript",
-				"python",
-				"html",
-				"css",
-				"go",
-			},
-			sync_install = false,
-			auto_install = true,
-			highlight = { enable = true },
-			indent = { enable = true },
-		},
-		config = function(_, opts)
-			require("nvim-treesitter.config").setup(opts)
-		end,
-	},
-
 	-- Integrated terminal
 	{
 		'akinsho/toggleterm.nvim',
@@ -132,7 +103,7 @@ return {
 	-- Fuzzy finding
 	{
 		'nvim-telescope/telescope.nvim',
-		branch = '0.1.x',
+		-- branch = 'master',
 		dependencies = {
 			'nvim-lua/plenary.nvim',
 			{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
@@ -143,7 +114,7 @@ return {
 				prompt_prefix = ' ',
 				path_display = { 'smart' },
 				preview = {
-					treesitter = false,
+					treesitter = true,
 				},
 				file_ignore_patterns = {
 					"node_modules",
@@ -156,6 +127,12 @@ return {
 				},
 			},
 		},
+    keys = {
+      { "<leader>ff", "<CMD>Telescope find_files<CR>", desc = "Find Files" },
+      { "<leader>fg", "<CMD>Telescope live_grep<CR>", desc = "Live Grep" },
+      { "<leader>fb", "<CMD>Telescope buffers<CR>", desc = "Find Buffers" },
+      { "<leader>fh", "<CMD>Telescope help_tags<CR>", desc = "Help Tags" },
+    },
 		config = function(_, opts)
 			local telescope = require('telescope')
 

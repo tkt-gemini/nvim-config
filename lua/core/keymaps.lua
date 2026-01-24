@@ -2,12 +2,6 @@
 
 local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
-local builtin = require("telescope.builtin")
-
-keymap("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
-keymap("n", "<leader>fg", builtin.live_grep, { desc = "Live Grep" })
-keymap("n", "<leader>fb", builtin.buffers, { desc = "Find Buffers" })
-keymap("n", "<leader>fh", builtin.help_tags, { desc = "Help Tags" })
 
 -- Window resize
 keymap("n", "<C-Up>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
@@ -62,3 +56,9 @@ keymap("n", "<leader>mo", "<cmd>MoltenShowOutput<CR>", { desc = "Molten: Show Ou
 keymap("n", "<leader>mh", "<cmd>MoltenHideOutput<CR>", { desc = "Molten: Hide Output" })
 keymap("n", "<leader>mn", "<cmd>MoltenNext<CR>", { desc = "Molten: Next Cell" })
 keymap("n", "<leader>mp", "<cmd>MoltenPrev<CR>", { desc = "Molten: Previous Cell" })
+
+-- Control windows
+keymap("n", "<C-h>", "<C-w>h", { desc = "Window Left" })
+keymap("n", "<C-l>", "<C-w>l", { desc = "Window Right" })
+keymap("n", "<C-j>", "<C-w>j", { desc = "Window Down" })
+keymap("n", "<C-k>", "<C-w>k", { desc = "Window Up" })
