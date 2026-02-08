@@ -36,7 +36,7 @@ opt.updatetime = 250
 opt.timeoutlen = 300
 opt.splitright = true
 opt.splitbelow = true
-opt.clipboard = 'unnamedplus'     -- Use system clipboard
+opt.clipboard = 'unnamedplus'
 
 -- Folding
 opt.foldmethod = 'expr'
